@@ -5,9 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import shutil
 
-from aocd.models import Puzzle
-
-from aoctool.utils import configure_date_args, configure_session_arg, get_puzzle_from_args
+from aoctool.utils import Puzzle, make_directory, parser_config
 
 
 @dataclass
@@ -17,12 +15,11 @@ class DataDownloader:
 
     @property
     def puzzle_dir(self) -> Path:
-        return self.output_dir / f'{self.puzzle.year}_{self.puzzle.day:02d}'
+        return self.output_dir / self.puzzle.name
 
     def download(self) -> None:
         if (not self.puzzle_dir.exists()):
-            print(f'Creating {self.puzzle_dir}')
-            self.puzzle_dir.mkdir(parents = True)
+            make_directory(self.puzzle_dir)
         _ = self.puzzle.input_data  # ensures data is downloaded
         input_data_path = self.puzzle_dir / 'input.txt'
         shutil.copy(self.puzzle.input_data_path, input_data_path)
@@ -33,11 +30,11 @@ class DataDownloader:
 
 
 def configure_parser(parser: ArgumentParser) -> None:
-    configure_date_args(parser)
-    configure_session_arg(parser)
-    parser.add_argument('-o', '--output-dir', default = 'data', help = 'output root directory')
+    parser_config['date'](parser)
+    parser_config['session'](parser)
+    parser_config['output_dir'](parser)
 
 def run(args: Namespace) -> None:
-    puzzle = get_puzzle_from_args(args)
+    puzzle = Puzzle.from_args(args)
     downloader = DataDownloader(puzzle, Path(args.output_dir))
     downloader.download()

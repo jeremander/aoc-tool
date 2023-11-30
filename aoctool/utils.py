@@ -4,13 +4,20 @@ import os
 from pathlib import Path
 import string
 
-from aocd.models import Puzzle, User
+import aocd.models
+from aocd.models import User
 
 
 AnyPath = str | Path
 
 START_YEAR = 2015
 DEFAULT_SESSION_KEY_PATH = Path.home() / '.adventofcode.session'
+
+VALID_LANGUAGES = [
+    'haskell',
+    'python',
+    'rust'
+]
 
 
 ####################
@@ -29,10 +36,34 @@ def get_default_session_cookie() -> str:
     assert all(c in hex_set for c in key)
     return key
 
-# def save_file(text: str, path: AnyPath) -> None:
-#     with open(path, 'w') as f:
-#         f.write(text)
-#     print(f'Saved {path}')
+def make_directory(path: Path) -> None:
+    print(f'Creating directory {path}')
+    path.mkdir(parents = True)
+
+def write_file(text: str, path: AnyPath) -> None:
+    with open(path, 'w') as f:
+        f.write(text)
+    print(f'Saved {path}')
+
+
+class Puzzle(aocd.models.Puzzle):
+
+    @property
+    def name(self) -> str:
+        return f'{self.year}_{self.day:02d}'
+
+    @property
+    def date_string(self) -> str:
+        return f'{self.year}-12-{self.day:02d}'
+
+    @classmethod
+    def from_args(cls, args: Namespace) -> 'Puzzle':
+        if (getattr(args, 'session', None) is None):
+            token = get_default_session_cookie()
+        else:
+            token = args.session
+        user = User(token)
+        return cls(args.year, args.day, user = user)
 
 
 ############
@@ -47,17 +78,22 @@ def configure_date_args(parser: ArgumentParser) -> None:
 def configure_session_arg(parser: ArgumentParser) -> None:
     parser.add_argument('-s', '--session', help = 'session key (hex string)')
 
+def configure_language_arg(parser: ArgumentParser) -> None:
+    parser.add_argument('-l', '--language', required = True, choices = VALID_LANGUAGES, help = 'programming language of choice')
+
+def configure_output_dir_arg(parser: ArgumentParser) -> None:
+    parser.add_argument('-o', '--output-dir', default = 'data', help = 'output root directory')
+
+parser_config = {
+    'date': configure_date_args,
+    'session': configure_session_arg,
+    'language': configure_language_arg,
+    'output_dir': configure_output_dir_arg,
+}
+
 def validate_args(args: Namespace) -> None:
     now = datetime.now()
     if hasattr(args, 'day'):
         assert (1 <= args.day <= 25), 'day must be in range 1-25'
     if hasattr(args, 'year'):
         assert (START_YEAR <= args.year <= now.year), f'year must be in range {START_YEAR}-{now.year}'
-
-def get_puzzle_from_args(args: Namespace) -> Puzzle:
-    if (args.session is None):
-        token = get_default_session_cookie()
-    else:
-        token = args.session
-    user = User(token)
-    return Puzzle(args.year, args.day, user = user)

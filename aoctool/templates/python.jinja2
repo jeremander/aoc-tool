@@ -1,0 +1,53 @@
+# Advent of Code
+# Date:     {{puzzle.date_string}}
+# Language: {{language}}
+
+import sys
+from typing import Optional, TypeAlias
+
+
+# define your own Value type for the problem
+Value: TypeAlias = object
+
+
+##################################################
+
+# fill these in
+
+def parse(input_data: str) -> Optional[Value]:
+     """Parse input into the Value type."""
+     return None
+
+def part1(value: Value) -> Optional[int]:
+    """Solve part 1."""
+    return None
+
+def part2(value: Value) -> Optional[int]:
+    """Solve part 2."""
+    return None
+
+##################################################
+
+INPUT_DATA_PATH = '{{input_data_path}}'
+
+solve_funcs = {1: part1, 2: part2}
+
+def solve(part: int) -> Optional[int]:
+    solver = globals()[f'part{part}']
+    with open(INPUT_DATA_PATH) as f:
+        input_data = f.read()
+    value = parse(input_data)
+    if (value is None):
+        raise NotImplementedError
+    return solver(value)
+
+
+if __name__ == '__main__':
+
+    part = int(sys.argv[1])
+    solution = solve(part)
+    if (solution is None):
+        exit(1)
+    else:
+        print(solution)
+
