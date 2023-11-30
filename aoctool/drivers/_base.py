@@ -28,9 +28,9 @@ class LanguageDriver(ABC):
             template = Template(f.read())
         return template.render(language = self.language.capitalize(), puzzle = puzzle, input_data_path = str(input_data_path.resolve()))
 
-    # @abstractmethod
-    # def compile_source(self, src_path: Path, build_dir: Path) -> Path:
-    #     """Given a source file and build directory, compiles the source into an executable and returns a path to the executable."""
+    @abstractmethod
+    def compile_source(self, src_path: Path, build_dir: Path) -> Path:
+        """Given a source file and build directory, compiles the source into an executable and returns a path to the executable."""
 
 
 @dataclass
@@ -67,6 +67,17 @@ class AoCBuilder:
 
     def do_scaffold(self) -> None:
         """Renders the scaffold template to a source file."""
-        print(f'Rendering {self.driver.template_path} to {self.scaffold_path}')
+        print(f'Rendering {self.driver.template_path}')
         scaffold = self.driver.render_scaffold(self.puzzle, self.input_data_path)
         write_file(scaffold, self.scaffold_path)
+        print(f'Saved scaffold source file to {self.scaffold_path}')
+
+    def do_compile(self) -> None:
+        """Compiles the source file to an executable."""
+        if (not self.scaffold_path.exists()):
+            raise FileNotFoundError(self.scaffold_path)
+        print(f'Compiling source file {self.scaffold_path}')
+        exec_path = self.driver.compile_source(self.scaffold_path, self.build_dir)
+        if (not exec_path.exists()):
+            raise RuntimeError(f'Failed to compile {self.scaffold_path}')
+        print(f'Compiled to executable {exec_path}')
