@@ -36,5 +36,5 @@ def configure_parser(parser: ArgumentParser) -> None:
 
 def run(args: Namespace) -> None:
     puzzle = Puzzle.from_args(args)
-    downloader = DataDownloader(puzzle, Path(args.output_dir))
+    downloader = DataDownloader(puzzle, args.output_dir)
     downloader.download()

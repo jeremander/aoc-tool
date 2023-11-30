@@ -82,7 +82,7 @@ def configure_language_arg(parser: ArgumentParser) -> None:
     parser.add_argument('-l', '--language', required = True, choices = VALID_LANGUAGES, help = 'programming language of choice')
 
 def configure_output_dir_arg(parser: ArgumentParser) -> None:
-    parser.add_argument('-o', '--output-dir', default = 'data', help = 'output root directory')
+    parser.add_argument('-o', '--output-dir', type = Path, default = Path('data'), help = 'output root directory')
 
 parser_config = {
     'date': configure_date_args,
