@@ -1,4 +1,4 @@
-"""Download data from Advent of Code site."""
+"""Download data from Advent of Code website."""
 
 from argparse import ArgumentParser, Namespace
 from dataclasses import dataclass

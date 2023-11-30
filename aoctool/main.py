@@ -15,7 +15,8 @@ def main() -> None:
     for name in get_command_names():
         mod = import_module(f'aoctool.commands.{name}')
         doc = mod.__doc__ or ''
-        subparser = subparsers.add_parser(name, help = doc.lower().rstrip('.'), description = doc, formatter_class = ArgumentDefaultsHelpFormatter)
+        help_str = doc[0].lower() + doc[1:].rstrip('.')
+        subparser = subparsers.add_parser(name, help = help_str, description = doc, formatter_class = ArgumentDefaultsHelpFormatter)
         mod.configure_parser(subparser)
     args = parser.parse_args()
     validate_args(args)

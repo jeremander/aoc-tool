@@ -1,3 +1,5 @@
+"""Create a scaffold for solving a puzzle in a particular programming language."""
+
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
 

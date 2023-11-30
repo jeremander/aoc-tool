@@ -1,0 +1,23 @@
+- Driver stages
+    - Compile
+        - Input: source file
+        - Output: executable
+    - Run
+        - Input: executable
+        - Output: solution and diagnostic info
+- Scaffolds
+    - Rust
+    - Haskell
+- Lines of code counting
+    - Lines with and without whitespace, comments
+        - might need to rely on language-specific tools
+    - Total characters
+- Timing
+    - Naive timing by wrapping calls in Python timer
+    - Compile stage: naive timing OK
+    - Run stage: start with naive timing
+        - Eventually expose timing functions within the scaffolds themselves
+    - Output function runtimes in standard format on stderr
+        - Parsing
+        - Solving
+    - Be careful when timing Haskell due to lazy evaluation
