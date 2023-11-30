@@ -11,6 +11,7 @@ from aocd.models import User
 
 
 AnyPath = str | Path
+Part = Literal[1, 2]
 
 START_YEAR = 2015
 DEFAULT_SESSION_KEY_PATH = Path.home() / '.adventofcode.session'
@@ -62,7 +63,7 @@ class Puzzle(aocd.models.Puzzle):
         return f'{self.year}-12-{self.day:02d}'
 
     @property
-    def current_part(self) -> Literal[1, 2]:
+    def current_part(self) -> Part:
         """Gets the current part of the puzzle.
         If part 1 is not complete, returns 1.
         Otherwise, returns 2."""

@@ -10,7 +10,7 @@ from typing import Any, ClassVar, NamedTuple, Optional, TypeAlias
 import aocd
 from jinja2 import Template
 
-from aoctool.utils import Puzzle, log, write_file
+from aoctool.utils import Part, Puzzle, log, write_file
 
 
 # type for compile-time diagnostics
@@ -121,20 +121,22 @@ class AoCBuilder:
             raise RuntimeError(f'Failed to compile {self.scaffold_path}')
         log(f'Compiled to executable {exec_path}')
 
-    def _get_run_result(self) -> RunResult:
+    def _get_run_result(self, part: Optional[Part] = None) -> RunResult:
+        part = part or self.puzzle.current_part
+        log(f'Computing solution for part {part} of the puzzle')
         if (not self.exec_path.exists()):
             raise FileNotFoundError(self.exec_path)
-        args = self.driver.get_run_args(self.exec_path) + [str(self.puzzle.current_part)]
+        args = self.driver.get_run_args(self.exec_path) + [str(part)]
         cmd = ' '.join(map(shlex.quote, args))
-        log(f'Running executable {self.exec_path}\n\t{cmd}')
+        log(f'Running executable {self.exec_path}\n\n{cmd}\n')
         proc = subprocess.run(args, capture_output = True)
         solution = int(proc.stdout.decode().strip()) if (proc.returncode == 0) else None
         return RunResult(solution, proc.returncode, proc.stderr.decode())
 
-    def do_run(self) -> None:
+    def do_run(self, part: Optional[Part] = None) -> None:
         """Runs the executable, printing out the solution to stdout.
         Runtime diagnostics will be saved to a JSON file."""
-        result = self._get_run_result()
+        result = self._get_run_result(self.puzzle.current_part)
         if (result.returncode == 0):
             run_info = self.driver.parse_run_info(result.stderr)
             log(f'Saving run info to {self.run_info_path}')
@@ -149,6 +151,7 @@ class AoCBuilder:
         """Runs the executable to obtain the solution, then submits it to the AoC server."""
         result = self._get_run_result()
         if (result.returncode == 0):
+            log(f'Submitting solution {result.solution}')
             part = 'a' if (self.puzzle.current_part == 1) else 'b'
             aocd.submit(result.solution, part = part, day = self.puzzle.day, year = self.puzzle.year)
         else:
