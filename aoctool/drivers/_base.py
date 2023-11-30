@@ -1,12 +1,28 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+import json
 from pathlib import Path
-from typing import ClassVar
+import shlex
+import subprocess
+import sys
+from typing import Any, ClassVar, NamedTuple, Optional, TypeAlias
 
+import aocd
 from jinja2 import Template
 
-from aoctool.utils import Puzzle, write_file
+from aoctool.utils import Puzzle, log, write_file
 
+
+# type for compile-time diagnostics
+CompileInfo: TypeAlias = dict[str, Any]
+
+class RunResult(NamedTuple):
+    solution: Optional[int]
+    returncode: int
+    stderr: str
+
+# type for runtime diagnostics
+RunInfo: TypeAlias = dict[str, Any]
 
 TEMPLATE_DIR = Path(__file__).parent.with_name('templates')
 
@@ -28,9 +44,23 @@ class LanguageDriver(ABC):
             template = Template(f.read())
         return template.render(language = self.language.capitalize(), puzzle = puzzle, input_data_path = str(input_data_path.resolve()))
 
+    def get_exec_path(self, src_path: Path, build_dir: Path) -> Path:
+        """Given a source path and build directory, gets a path to the file that will be compiled."""
+        return build_dir / src_path.stem
+
     @abstractmethod
-    def compile_source(self, src_path: Path, build_dir: Path) -> Path:
-        """Given a source file and build directory, compiles the source into an executable and returns a path to the executable."""
+    def compile_source(self, src_path: Path, build_dir: Path) -> None:
+        """Given a source file and build directory, compiles the source into an executable.
+        The executable path should be the result of `self.get_exec_path(src_path, build_dir)`."""
+
+    @abstractmethod
+    def get_run_args(self, exec_path: Path) -> list[str]:
+        """Given an executable path, gets a list of arguments which will be run as a subprocess.
+        An additional argument, either '1' or '2', will be appended indicating which part of the puzzle to run.
+        When run, the command will write integer output to stdout, and diagnostic info to stderr."""
+
+    def parse_run_info(self, stderr: str) -> RunInfo:
+        return {}
 
 
 @dataclass
@@ -43,7 +73,7 @@ class AoCBuilder:
     @property
     def puzzle_dir(self) -> Path:
         """Path to the day's puzzle directory."""
-        return self.output_dir / self.puzzle.name
+        return self.output_dir / str(self.puzzle.year) / f'{self.puzzle.day:02d}'
 
     @property
     def input_data_path(self) -> Path:
@@ -65,19 +95,61 @@ class AoCBuilder:
         """Path to the rendered scaffold source file."""
         return self.language_dir / f'{self.puzzle.name}.{self.driver.file_extension}'
 
+    @property
+    def exec_path(self) -> Path:
+        return self.driver.get_exec_path(self.scaffold_path, self.build_dir)
+
+    @property
+    def run_info_path(self) -> Path:
+        """Path to the run info JSON file."""
+        return self.build_dir / 'run_info.json'
+
     def do_scaffold(self) -> None:
         """Renders the scaffold template to a source file."""
-        print(f'Rendering {self.driver.template_path}')
+        log(f'Rendering {self.driver.template_path}')
         scaffold = self.driver.render_scaffold(self.puzzle, self.input_data_path)
         write_file(scaffold, self.scaffold_path)
-        print(f'Saved scaffold source file to {self.scaffold_path}')
 
     def do_compile(self) -> None:
         """Compiles the source file to an executable."""
         if (not self.scaffold_path.exists()):
             raise FileNotFoundError(self.scaffold_path)
-        print(f'Compiling source file {self.scaffold_path}')
-        exec_path = self.driver.compile_source(self.scaffold_path, self.build_dir)
+        log(f'Compiling source file {self.scaffold_path}')
+        exec_path = self.driver.get_exec_path(self.scaffold_path, self.build_dir)
+        self.driver.compile_source(self.scaffold_path, self.build_dir)
         if (not exec_path.exists()):
             raise RuntimeError(f'Failed to compile {self.scaffold_path}')
-        print(f'Compiled to executable {exec_path}')
+        log(f'Compiled to executable {exec_path}')
+
+    def _get_run_result(self) -> RunResult:
+        if (not self.exec_path.exists()):
+            raise FileNotFoundError(self.exec_path)
+        args = self.driver.get_run_args(self.exec_path) + [str(self.puzzle.current_part)]
+        cmd = ' '.join(map(shlex.quote, args))
+        log(f'Running executable {self.exec_path}\n\t{cmd}')
+        proc = subprocess.run(args, capture_output = True)
+        solution = int(proc.stdout.decode().strip()) if (proc.returncode == 0) else None
+        return RunResult(solution, proc.returncode, proc.stderr.decode())
+
+    def do_run(self) -> None:
+        """Runs the executable, printing out the solution to stdout.
+        Runtime diagnostics will be saved to a JSON file."""
+        result = self._get_run_result()
+        if (result.returncode == 0):
+            run_info = self.driver.parse_run_info(result.stderr)
+            log(f'Saving run info to {self.run_info_path}')
+            with open(self.run_info_path, 'w') as f:
+                json.dump(run_info, f, indent = 4)
+            print(result.solution)
+        else:
+            print(result.stderr, file = sys.stderr)
+            print('❌')
+
+    def do_submit(self) -> None:
+        """Runs the executable to obtain the solution, then submits it to the AoC server."""
+        result = self._get_run_result()
+        if (result.returncode == 0):
+            part = 'a' if (self.puzzle.current_part == 1) else 'b'
+            aocd.submit(result.solution, part = part, day = self.puzzle.day, year = self.puzzle.year)
+        else:
+            raise ValueError('Failed to compute a valid solution to the puzzle')

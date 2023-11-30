@@ -3,6 +3,8 @@ from datetime import datetime
 import os
 from pathlib import Path
 import string
+import sys
+from typing import Literal
 
 import aocd.models
 from aocd.models import User
@@ -24,6 +26,9 @@ VALID_LANGUAGES = [
 # HELPER FUNCTIONS #
 ####################
 
+def log(msg: str) -> None:
+    print(msg, file = sys.stderr)
+
 def get_default_session_cookie() -> str:
     """Gets the session cookie from the user's AOC_SESSION environment variable or default file."""
     hex_set = set(string.hexdigits)
@@ -37,13 +42,13 @@ def get_default_session_cookie() -> str:
     return key
 
 def make_directory(path: Path) -> None:
-    print(f'Creating directory {path}')
+    log(f'Creating directory {path}')
     path.mkdir(parents = True)
 
 def write_file(text: str, path: AnyPath) -> None:
     with open(path, 'w') as f:
         f.write(text)
-    print(f'Saved {path}')
+    log(f'Saved {path}')
 
 
 class Puzzle(aocd.models.Puzzle):
@@ -55,6 +60,13 @@ class Puzzle(aocd.models.Puzzle):
     @property
     def date_string(self) -> str:
         return f'{self.year}-12-{self.day:02d}'
+
+    @property
+    def current_part(self) -> Literal[1, 2]:
+        """Gets the current part of the puzzle.
+        If part 1 is not complete, returns 1.
+        Otherwise, returns 2."""
+        return 2 if self.answered_a else 1
 
     @classmethod
     def from_args(cls, args: Namespace) -> 'Puzzle':

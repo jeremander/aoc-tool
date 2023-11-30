@@ -1,13 +1,15 @@
-- Driver stages
-    - Compile
-        - Input: source file
-        - Output: executable
-    - Run
-        - Input: executable
-        - Output: solution and diagnostic info
-- Scaffolds
+- Drivers
     - Rust
+        - Scaffold
+        - Compile
+        - Run
     - Haskell
+        - Scaffold
+        - Compile
+        - Run
+
+--------
+
 - Lines of code counting
     - Lines with and without whitespace, comments
         - might need to rely on language-specific tools

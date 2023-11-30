@@ -18,7 +18,6 @@ def run(args: Namespace) -> None:
     builder = AoCBuilder(driver, puzzle, args.output_dir)
     if (not builder.language_dir.exists()):
         make_directory(builder.language_dir)
-    breakpoint()
     if builder.scaffold_path.exists() and (not args.force):
         raise ValueError(f'Refusing to overwrite scaffold file {builder.scaffold_path} (to do so, use --force)')
     builder.do_scaffold()

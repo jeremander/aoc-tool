@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import shutil
 
-from aoctool.utils import Puzzle, make_directory, parser_config
+from aoctool.utils import Puzzle, log, make_directory, parser_config
 
 
 @dataclass
@@ -15,18 +15,20 @@ class DataDownloader:
 
     @property
     def puzzle_dir(self) -> Path:
-        return self.output_dir / self.puzzle.name
+        return self.output_dir / str(self.puzzle.year) / f'{self.puzzle.day:02d}'
 
     def download(self) -> None:
         if (not self.puzzle_dir.exists()):
             make_directory(self.puzzle_dir)
-        _ = self.puzzle.input_data  # ensures data is downloaded
+        _ = self.puzzle.input_data  # ensures input data is downloaded
         input_data_path = self.puzzle_dir / 'input.txt'
         shutil.copy(self.puzzle.input_data_path, input_data_path)
-        print(f'Saved {input_data_path}')
-        description_path = self.puzzle_dir / 'description.html'
-        shutil.copy(self.puzzle.prose0_path, description_path)
-        print(f'Saved {description_path}')
+        log(f'Saved {input_data_path}')
+        part = self.puzzle.current_part  # ensures description is downloaded
+        description_path = self.puzzle_dir / f'description.part{part}.html'
+        prose_path_attr = f'prose{part - 1}_path'
+        shutil.copy(getattr(self.puzzle, prose_path_attr), description_path)
+        log(f'Saved {description_path}')
 
 
 def configure_parser(parser: ArgumentParser) -> None:
