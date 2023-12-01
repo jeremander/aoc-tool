@@ -1,23 +1,26 @@
+"""Multilingual scaffolding for Advent of Code (AoC) puzzles."""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from importlib import import_module
-from pathlib import Path
 from types import ModuleType
 
 from aoctool.utils import validate_args
 
 
-def get_command_names() -> list[str]:
-    path = Path(__file__).with_name('commands')
-    return [p.stem for p in path.glob('*.py') if (not p.stem.startswith('_'))]
+COMMANDS = [
+    'download',
+    'scaffold',
+    'compile',
+    'run',
+]
 
 def get_module_for_command(name: str) -> ModuleType:
     return import_module(f'aoctool.commands.{name}')
 
-
 def main() -> None:
-    parser = ArgumentParser(formatter_class = ArgumentDefaultsHelpFormatter)
+    parser = ArgumentParser(description = __doc__, formatter_class = ArgumentDefaultsHelpFormatter)
     subparsers = parser.add_subparsers(help = 'command', dest = 'command')
-    for name in get_command_names():
+    for name in COMMANDS:
         mod = get_module_for_command(name)
         doc = mod.__doc__ or ''
         help_str = doc[0].lower() + doc[1:].rstrip('.')

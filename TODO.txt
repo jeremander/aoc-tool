@@ -1,8 +1,6 @@
+- README
+- poetry for Python package mangagement in scaffold
 - Drivers
-    - Rust
-        - Scaffold
-        - Compile
-        - Run
     - Haskell
         - Scaffold
         - Compile
@@ -10,6 +8,7 @@
 
 --------
 
+- Upload to PyPI
 - Lines of code counting
     - Lines with and without whitespace, comments
         - might need to rely on language-specific tools

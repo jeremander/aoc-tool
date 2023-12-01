@@ -89,8 +89,8 @@ class Puzzle(aocd.models.Puzzle):
 
 def configure_date_args(parser: ArgumentParser) -> None:
     now = datetime.now()
-    parser.add_argument('-d', '--day', type = int, default = now.day, help = 'day of December (1-25)')
     parser.add_argument('-y', '--year', type = int, default = now.year, help = 'year')
+    parser.add_argument('-d', '--day', type = int, default = now.day, help = 'day of December (1-25)')
 
 def configure_session_arg(parser: ArgumentParser) -> None:
     parser.add_argument('-s', '--session', help = 'session key (hex string)')
