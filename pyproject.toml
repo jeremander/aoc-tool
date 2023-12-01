@@ -3,7 +3,7 @@ name = "aoc-tool"
 version = "0.1.0"
 description = ""
 authors = ["Jeremy Silver <jeremys@nessiness.com>"]
-# readme = "README.md"
+readme = "README.md"
 packages = [{include = "aoctool"}]
 
 [tool.poetry.dependencies]

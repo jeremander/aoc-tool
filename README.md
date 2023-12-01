@@ -162,5 +162,6 @@ Once you have the integer solution, you can manually enter it on the AoC website
 
 ### 🚧 Coming soon 🚧
 
+- Scaffolding for unit tests
 - Time profiling (to compare runtime performance of different languages)
 - Character/word/line counts (to compare "verbosity" of different languages)

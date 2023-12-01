@@ -7,6 +7,15 @@
 --------
 
 - Upload to PyPI
+- Unit test scaffolding
+    - 'aoctool test' command
+    - use puzzle.examples to fetch examples during scaffolding
+    - include placeholder for a new test of component function
+    - Languages
+        - Python
+            - pytest to check examples
+        - Rust
+        - Haskell
 - Lines of code counting
     - Lines with and without whitespace, comments
         - might need to rely on language-specific tools

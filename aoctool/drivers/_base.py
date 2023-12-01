@@ -115,7 +115,7 @@ class AoCBuilder:
     @property
     def run_info_path(self) -> Path:
         """Path to the run info JSON file."""
-        return self.build_dir / 'run_info.json'
+        return self.scaffold_dir / 'run_info.json'
 
     def do_scaffold(self, force: bool = False) -> None:
         """Renders the scaffold template to a source file.
