@@ -1,5 +1,3 @@
-- README
-- poetry for Python package mangagement in scaffold
 - Drivers
     - Haskell
         - Scaffold

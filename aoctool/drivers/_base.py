@@ -126,21 +126,25 @@ class AoCBuilder:
             log(f'Deleting {self.scaffold_dir}')
             shutil.rmtree(self.scaffold_dir)
         make_directory(self.scaffold_dir)
-        self.driver.make_scaffold(self.puzzle, self.input_data_path, self.scaffold_dir)
         log(f'Created scaffold project directory {self.scaffold_dir}')
+        self.driver.make_scaffold(self.puzzle, self.input_data_path, self.scaffold_dir)
 
     def do_compile(self) -> None:
         """Compiles the source file to an executable."""
         if (not self.src_path.exists()):
             raise FileNotFoundError(self.src_path)
-        log(f'Compiling source file {self.src_path}')
         exec_path = self.driver.get_exec_path(self.src_path, self.build_dir)
-        if (not self.build_dir.exists()):
-            make_directory(self.build_dir)
+        if (exec_path == self.src_path):
+            log(f'No compilation required ({self.src_path} is an executable script)')
+        else:
+            if (not self.build_dir.exists()):
+                make_directory(self.build_dir)
+            log(f'Compiling source file {self.src_path}')
         self.driver.compile_source(self.scaffold_dir, self.src_path, self.build_dir)
         if (not exec_path.exists()):
             raise RuntimeError(f'Failed to compile {self.src_path}')
-        log(f'Compiled to executable {exec_path}')
+        if (exec_path != self.src_path):
+            log(f'Compiled to executable {exec_path}')
 
     def _get_run_result(self, part: Optional[Part] = None) -> RunResult:
         part = part or self.puzzle.current_part

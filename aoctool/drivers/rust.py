@@ -24,6 +24,7 @@ class RustDriver(LanguageDriver):
         }
         with open(manifest_path, 'w') as f:
             toml.dump(manifest, f)
+        log(f'Created {manifest_path}')
 
     def get_exec_path(self, src_path: Path, build_dir: Path) -> Path:
         return build_dir / 'release' / src_path.stem

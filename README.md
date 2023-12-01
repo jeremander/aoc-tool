@@ -142,11 +142,9 @@ This will compile the code using the appropriate language toolchain, and place t
 
 Sometimes your code may depend on external libraries. A rudimentary attempt has been made to set up the scaffolding for a "project" so that dependencies can be added using the usual toolchains.
 
-- **Python**: Currently, you have to manage your own dependencies (i.e. make sure you've installed them yourself with `pip` so they can be imported at runtime).
-  - TODO: include a `pyproject.toml` file.
-- **Rust**: A `Cargo.toml` file is provided so you can add dependencies into its `dependencies` section manually, or use `cargo add` to do the same thing.
-- **Haskell**:
-  - TODO: use a `cabal` file to manage dependencies.
+- **Python**: Uses [Poetry](https://python-poetry.org) to manage dependencies. A `pyproject.toml` file is provided so you can add dependencies to the `[tool.poetry.dependencies]` section manually, or use `poetry add <dependency>`.
+- **Rust**: Uses `cargo` to manage dependencies. A `Cargo.toml` file is provided so you can add dependencies into its `[dependencies]` section, or use `cargo add <dependency>`.
+- **Haskell**: Uses `cabal` to manage dependencies. An `aoc.cabal` file is provided... TODO: implement this.
 
 ### Run the code
 
