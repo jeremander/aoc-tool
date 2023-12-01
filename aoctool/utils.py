@@ -2,9 +2,10 @@ from argparse import ArgumentParser, Namespace
 from datetime import datetime
 import os
 from pathlib import Path
+import shlex
 import string
 import sys
-from typing import Literal
+from typing import Iterable, Literal
 
 import aocd.models
 from aocd.models import User
@@ -50,6 +51,9 @@ def write_file(text: str, path: AnyPath) -> None:
     with open(path, 'w') as f:
         f.write(text)
     log(f'Saved {path}')
+
+def command2str(cmd: Iterable[str]) -> str:
+    return ' '.join(map(shlex.quote, cmd))
 
 
 class Puzzle(aocd.models.Puzzle):

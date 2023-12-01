@@ -1,0 +1,52 @@
+// Advent of Code
+// Date:     {{puzzle.date_string}}
+// Language: {{language}}
+
+use std::env;
+use std::fs;
+use std::process;
+
+
+// define your own Value type for the problem
+type Value = ();
+
+
+//////////////////////////////////////////////////
+
+// fill these in
+
+/// Parse input into the Value type
+fn parse(input_data: &str) -> Option<Value> {
+    None
+}
+
+/// Solve part 1
+fn part1(value: Value) -> Option<i64> {
+    None
+}
+
+/// Solve part 2
+fn part2(value: Value) -> Option<i64> {
+    None
+}
+
+//////////////////////////////////////////////////
+
+const INPUT_DATA_PATH: &str = "{{input_data_path}}";
+
+fn solve(part: i32) -> Option<i64> {
+    let solver = if part == 1 { part1 } else { part2 };
+    let input_data = fs::read_to_string(INPUT_DATA_PATH).expect("Could not read file.");
+    let value = parse(&input_data).expect("parse not implemented");
+    solver(value)
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let part: i32 = match args[1].parse() {
+        Err(_) => { process::exit(1) },
+        Ok(part) => part
+    };
+    let solution: i64 = solve(part).expect("part{part} not implemented");
+    println!("{solution}");
+}

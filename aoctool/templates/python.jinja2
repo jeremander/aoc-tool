@@ -33,7 +33,7 @@ INPUT_DATA_PATH = '{{input_data_path}}'
 solve_funcs = {1: part1, 2: part2}
 
 def solve(part: int) -> Optional[int]:
-    solver = globals()[f'part{part}']
+    solver = solve_funcs[part]
     with open(INPUT_DATA_PATH) as f:
         input_data = f.read()
     value = parse(input_data)

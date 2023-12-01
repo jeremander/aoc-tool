@@ -3,7 +3,7 @@
 from argparse import ArgumentParser, Namespace
 
 from aoctool.drivers import DRIVERS, AoCBuilder
-from aoctool.utils import Puzzle, make_directory, parser_config
+from aoctool.utils import Puzzle, parser_config
 
 
 def configure_parser(parser: ArgumentParser) -> None:
@@ -16,8 +16,4 @@ def run(args: Namespace) -> None:
     driver = DRIVERS[args.language]
     puzzle = Puzzle.from_args(args)
     builder = AoCBuilder(driver, puzzle, args.output_dir)
-    if (not builder.language_dir.exists()):
-        make_directory(builder.language_dir)
-    if builder.scaffold_path.exists() and (not args.force):
-        raise ValueError(f'Refusing to overwrite scaffold file {builder.scaffold_path} (to do so, use --force)')
-    builder.do_scaffold()
+    builder.do_scaffold(force = args.force)
