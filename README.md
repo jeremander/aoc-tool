@@ -6,7 +6,7 @@ Currently supported languages:
 
 - Python
 - Rust
-- Haskell (coming soon!)
+- Haskell
 
 ## Installation
 
@@ -144,7 +144,7 @@ Sometimes your code may depend on external libraries. A rudimentary attempt has 
 
 - **Python**: Uses [Poetry](https://python-poetry.org) to manage dependencies. A `pyproject.toml` file is provided so you can add dependencies to the `[tool.poetry.dependencies]` section manually, or use `poetry add <dependency>`.
 - **Rust**: Uses [Cargo](https://doc.rust-lang.org/cargo/) to manage dependencies. A `Cargo.toml` file is provided so you can add dependencies into its `[dependencies]` section, or use `cargo add <dependency>`.
-- **Haskell**: Uses `cabal` to manage dependencies. An `aoc.cabal` file is provided... TODO: implement this.
+- **Haskell**: Uses `cabal` to manage dependencies. An `aoc<year><day>.cabal` file is provided so you can add dependencies into its `build-depends` section.
 
 ### Run the code
 
