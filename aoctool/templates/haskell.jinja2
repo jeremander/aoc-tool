@@ -1,0 +1,49 @@
+-- Advent of Code
+-- Date:     {{puzzle.date_string}}
+-- Language: {{language}}
+
+import Data.Char (toLower)
+import System.Environment (getArgs)
+
+
+-- define your own Value type for the problem
+type Value = ()
+
+
+--------------------------------------------------
+
+-- fill these in
+
+--- Parse input into the Value type
+parse :: String -> Maybe Value
+parse value = Nothing
+
+--- Solve part 1
+part1 :: Value -> Maybe Int
+part1 value = Nothing
+
+--- Solve part 2
+part2 :: Value -> Maybe Int
+part2 value = Nothing
+
+--------------------------------------------------
+
+inputDataPath :: FilePath
+inputDataPath = "{{input_data_path}}"
+
+data Part = Part1 | Part2 deriving (Enum, Eq, Show)
+
+solve :: Part -> IO (Maybe Int)
+solve part = do
+    let solver = if part == Part1 then part1 else part2
+    inputData <- readFile inputDataPath
+    return $ parse inputData >>= solver
+
+main :: IO ()
+main = do
+    args <- getArgs
+    let part = toEnum $ read (head args) - 1
+    solution <- solve part
+    case solution of
+        Nothing -> error $ toLower <$> show part ++ " not implemented"
+        Just sol -> print sol

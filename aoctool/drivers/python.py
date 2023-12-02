@@ -27,6 +27,7 @@ class PythonDriver(LanguageDriver):
         return src_path
 
     def compile_source(self, scaffold_dir: Path, src_path: Path, build_dir: Path) -> None:
+        # no compilation in Python
         pass
 
     def get_run_args(self, exec_path: Path) -> list[str]:

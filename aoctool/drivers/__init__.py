@@ -1,12 +1,14 @@
 from argparse import Namespace
 
 from aoctool.drivers._base import AoCBuilder
+from aoctool.drivers.haskell import HaskellDriver
 from aoctool.drivers.python import PythonDriver
 from aoctool.drivers.rust import RustDriver
 from aoctool.utils import Puzzle
 
 
 DRIVERS = {
+    'haskell': HaskellDriver(),
     'python': PythonDriver(),
     'rust': RustDriver(),
 }
