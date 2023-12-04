@@ -59,6 +59,7 @@ ignore = [
 exclude = [
     ".venv",
     "tmp*",
+    "aoctool/templates/*",
 ]
 
 # ignore unused imports in __init__.py files

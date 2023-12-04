@@ -25,7 +25,7 @@ def solve(part: int) -> Optional[int]:
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description = 'Run Advent of Code puzzle for {{puzzle.date_string}}')
-    parser.add_argument('part', type = int, choices = (1, 2), help = 'Which part of the puzzle to run')
+    parser.add_argument('part', type = int, choices = (1, 2), help = 'which part of the puzzle to run')
     args = parser.parse_args()
     solution = solve(args.part)
     if (solution is None):
