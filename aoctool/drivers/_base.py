@@ -47,7 +47,6 @@ class LanguageDriver(ABC):
 
     def get_src_path(self, puzzle: Puzzle, scaffold_dir: Path) -> Path:
         """Given a puzzle and scaffold directory, gets the source path."""
-        # return scaffold_dir / f'{puzzle.name}.{self.file_extension}'
         return scaffold_dir / f'{puzzle.name}.{self.file_extension}'
 
     def make_scaffold(self, puzzle: Puzzle, input_data_path: Path, scaffold_dir: Path) -> None:
@@ -130,6 +129,8 @@ class AoCBuilder:
         make_directory(self.scaffold_dir)
         log(f'Created scaffold project directory {self.scaffold_dir}')
         self.driver.make_scaffold(self.puzzle, self.input_data_path, self.scaffold_dir)
+        src_path = self.driver.get_src_path(self.puzzle, self.scaffold_dir)
+        log(f'To solve the puzzle, edit the code in: {src_path}')
 
     def do_compile(self) -> None:
         """Compiles the source file to an executable."""

@@ -26,4 +26,11 @@
 - Run multiple puzzles at once (give it root directory?)
     - Gather all diagnostics into a JSON
     - Statistics and plots
+- aoctool unit tests
+    - test functionality of each main subcommand
+        - [x] download
+        - [ ] scaffold
+        - [ ] compile
+        - [ ] run
+        - [ ] test
 - Upload to PyPI

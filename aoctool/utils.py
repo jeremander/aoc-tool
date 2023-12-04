@@ -60,7 +60,6 @@ class Puzzle(aocd.models.Puzzle):
 
     @property
     def name(self) -> str:
-        # return f'{self.year}_{self.day:02d}'
         return f'aoc{self.year}{self.day:02d}'
 
     @property
