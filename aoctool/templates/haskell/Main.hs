@@ -2,31 +2,13 @@
 -- Date:     {{puzzle.date_string}}
 -- Language: {{language}}
 
+module Main where
+
 import Data.Char (toLower)
 import System.Environment (getArgs)
 
+import Aoc{{puzzle.year}}{{'%02d' % puzzle.day}} (parse, part1, part2)
 
--- define your own Value type for the problem
-type Value = ()
-
-
---------------------------------------------------
-
--- fill these in
-
---- Parse input into the Value type
-parse :: String -> Maybe Value
-parse inputData = Nothing
-
---- Solve part 1
-part1 :: Value -> Maybe Int
-part1 value = Nothing
-
---- Solve part 2
-part2 :: Value -> Maybe Int
-part2 value = Nothing
-
---------------------------------------------------
 
 inputDataPath :: FilePath
 inputDataPath = "{{input_data_path}}"
@@ -37,7 +19,10 @@ solve :: Part -> IO (Maybe Int)
 solve part = do
     let solver = if part == Part1 then part1 else part2
     inputData <- readFile inputDataPath
-    return $ parse inputData >>= solver
+    let solution = case parse inputData of
+                    Nothing    -> error "parse not implemented"
+                    Just value -> solver value
+    return solution
 
 main :: IO ()
 main = do

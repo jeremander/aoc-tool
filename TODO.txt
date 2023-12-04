@@ -1,6 +1,3 @@
-- Migrate to multi-file project structure
-    - split main from library
-    - 'scaffold' command should clearly indicate which file to edit
 - Unit test scaffolding
     - 'aoctool test' command
     - use puzzle.examples to fetch examples during scaffolding
@@ -24,13 +21,17 @@
         - Solving
     - Be careful when timing Haskell due to lazy evaluation
 - Run multiple puzzles at once (give it root directory?)
+    - 'profile' subcommand?
     - Gather all diagnostics into a JSON
     - Statistics and plots
 - aoctool unit tests
     - test functionality of each main subcommand
         - [x] download
-        - [ ] scaffold
-        - [ ] compile
+        - [x] scaffold
+        - [x] compile
         - [ ] run
+            - [x] incomplete
+            - [ ] complete
         - [ ] test
+        - [ ] profile
 - Upload to PyPI

@@ -7,7 +7,7 @@ use std::fs;
 use std::process;
 
 mod aoc{{puzzle.year}}{{'%02d' % puzzle.day}};
-use aoc{{puzzle.year}}{{'%02d' % puzzle.day}}::*;
+use aoc{{puzzle.year}}{{'%02d' % puzzle.day}}::{parse, part1, part2};
 
 
 const INPUT_DATA_PATH: &str = "{{input_data_path}}";
