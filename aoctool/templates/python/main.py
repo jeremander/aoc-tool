@@ -2,31 +2,11 @@
 # Date:     {{puzzle.date_string}}
 # Language: {{language}}
 
-import sys
+import argparse
 from typing import Optional, TypeAlias
 
+from aoc{{puzzle.year}}{{'%02d' % puzzle.day}} import parse, part1, part2
 
-# define your own Value type for the problem
-Value: TypeAlias = object
-
-
-##################################################
-
-# fill these in
-
-def parse(input_data: str) -> Optional[Value]:
-    """Parse input into the Value type."""
-    return None
-
-def part1(value: Value) -> Optional[int]:
-    """Solve part 1."""
-    return None
-
-def part2(value: Value) -> Optional[int]:
-    """Solve part 2."""
-    return None
-
-##################################################
 
 INPUT_DATA_PATH = '{{input_data_path}}'
 
@@ -44,10 +24,11 @@ def solve(part: int) -> Optional[int]:
 
 if __name__ == '__main__':
 
-    part = int(sys.argv[1])
-    solution = solve(part)
+    parser = argparse.ArgumentParser(description = 'Run Advent of Code puzzle for {{puzzle.date_string}}')
+    parser.add_argument('part', type = int, choices = (1, 2), help = 'Which part of the puzzle to run')
+    args = parser.parse_args()
+    solution = solve(args.part)
     if (solution is None):
         exit(1)
     else:
         print(solution)
-

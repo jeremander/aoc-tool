@@ -58,7 +58,7 @@ ignore = [
 # paths to exclude
 exclude = [
     ".venv",
-    "tmp*"
+    "tmp*",
 ]
 
 # ignore unused imports in __init__.py files

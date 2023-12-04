@@ -33,17 +33,12 @@ class LanguageDriver(ABC):
 
     language: ClassVar[str]        # name of language
     file_extension: ClassVar[str]  # file extension used for files in the language
+    is_compiled: ClassVar[bool]    # whether the language is a compiled language
 
     @property
-    def template_path(self) -> Path:
-        """Path to the language scaffold jinja template."""
-        return TEMPLATE_DIR / f'{self.language}.jinja2'
-
-    def render_scaffold(self, puzzle: Puzzle, input_data_path: Path) -> str:
-        """Given a puzzle and input data, renders a scaffold to be saved as a source file."""
-        with open(self.template_path) as f:
-            template = Template(f.read())
-        return template.render(language = self.language.capitalize(), puzzle = puzzle, input_data_path = str(input_data_path.resolve()))
+    def template_dir(self) -> Path:
+        """Path to the project scaffold template for the language."""
+        return TEMPLATE_DIR / self.language
 
     def get_src_path(self, puzzle: Puzzle, scaffold_dir: Path) -> Path:
         """Given a puzzle and scaffold directory, gets the source path."""
@@ -51,11 +46,22 @@ class LanguageDriver(ABC):
 
     def make_scaffold(self, puzzle: Puzzle, input_data_path: Path, scaffold_dir: Path) -> None:
         """Sets up scaffolding for a project in the given language.
-        By default, renders the template as a single source file in the scaffold directory."""
-        log(f'Rendering {self.template_path}')
-        scaffold = self.render_scaffold(puzzle, input_data_path)
-        src_path = self.get_src_path(puzzle, scaffold_dir)
-        write_file(scaffold, src_path)
+        By default, renders the files in the template directory into the scaffold directory."""
+        log(f'Rendering {self.template_dir}')
+        kwargs = {
+            'language': self.language.capitalize(),
+            'puzzle': puzzle,
+            'input_data_path': str(input_data_path.resolve()),
+        }
+        for path in self.template_dir.rglob('*'):
+            if path.is_file():
+                # apply substitutions in filename itself
+                template_path = path.with_name(path.name.format(**kwargs))
+                with open(path) as f:
+                    template = Template(f.read())
+                scaffold = template.render(**kwargs)
+                dest_path = scaffold_dir / str(template_path.relative_to(self.template_dir))
+                write_file(scaffold, dest_path)
 
     def get_exec_path(self, src_path: Path, build_dir: Path) -> Path:
         """Given the source path and build directory, gets a path to the file that will be compiled."""
@@ -136,18 +142,20 @@ class AoCBuilder:
         """Compiles the source file to an executable."""
         if (not self.src_path.exists()):
             raise FileNotFoundError(self.src_path)
-        exec_path = self.driver.get_exec_path(self.src_path, self.build_dir)
-        if (exec_path == self.src_path):
-            log(f'No compilation required ({self.src_path} is an executable script)')
-        else:
+        if self.driver.is_compiled:
             if (not self.build_dir.exists()):
                 make_directory(self.build_dir)
             log(f'Compiling source file {self.src_path}')
+        else:
+            log(f'No compilation required ({self.driver.language} is a dynamic language)')
         self.driver.compile_source(self.scaffold_dir, self.src_path, self.build_dir)
+        exec_path = self.driver.get_exec_path(self.src_path, self.build_dir)
         if (not exec_path.exists()):
             raise RuntimeError(f'Failed to compile {self.src_path}')
-        if (exec_path != self.src_path):
+        if self.driver.is_compiled:
             log(f'Compiled to executable {exec_path}')
+        else:
+            log(f'Executable script is {exec_path}')
 
     def _get_run_result(self, part: Optional[Part] = None, profile: bool = False) -> RunResult:
         part = part or self.puzzle.current_part

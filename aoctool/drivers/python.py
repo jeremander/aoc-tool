@@ -9,6 +9,7 @@ class PythonDriver(LanguageDriver):
 
     language = 'python'
     file_extension = 'py'
+    is_compiled = False
 
     def make_scaffold(self, puzzle: Puzzle, input_data_path: Path, scaffold_dir: Path) -> None:
         super().make_scaffold(puzzle, input_data_path, scaffold_dir)
@@ -24,10 +25,9 @@ class PythonDriver(LanguageDriver):
         log(f'Created {manifest_path}')
 
     def get_exec_path(self, src_path: Path, build_dir: Path) -> Path:
-        return src_path
+        return src_path.with_name('main.py')
 
     def compile_source(self, scaffold_dir: Path, src_path: Path, build_dir: Path) -> None:
-        # no compilation in Python
         pass
 
     def get_run_args(self, exec_path: Path) -> list[str]:
