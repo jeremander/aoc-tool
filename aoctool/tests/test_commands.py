@@ -60,13 +60,20 @@ def test_download(tmpdir, capsys):
 TEST_BUILDER_PARAMS = [
     {
         'language': 'python',
-        'src_path': 'aoc202301.py',
         'build_dir': 'build',
         'exec_path': 'main.py',
         'scaffold_files': ['aoc202301.py', 'main.py', 'pyproject.toml'],
         'missing_data_err': ' No such file or directory',
         'not_implemented_err': 'NotImplementedError',
-    }
+    },
+    {
+        'language': 'rust',
+        'build_dir': 'build',
+        'exec_path': 'build/release/aoc202301',
+        'scaffold_files': ['aoc202301.rs', 'main.rs', 'Cargo.toml'],
+        'missing_data_err': 'Could not read file',
+        'not_implemented_err': 'parse not implemented',
+    },
 ]
 
 @pytest.mark.parametrize('params', TEST_BUILDER_PARAMS, ids = itemgetter('language'))
@@ -82,7 +89,7 @@ def test_builder(params, tmpdir, capsys):
     assert builder.puzzle_dir == puzzle_dir
     assert builder.input_data_path == puzzle_dir / 'input.txt'
     assert builder.scaffold_dir == puzzle_dir / language
-    assert builder.src_path == puzzle_dir / language / params['src_path']
+    assert builder.src_path == puzzle_dir / language / f'{puzzle.name}.{driver.file_extension}'
     assert builder.build_dir == puzzle_dir / language / params['build_dir']
     assert builder.exec_path == puzzle_dir / language / params['exec_path']
 

@@ -11,6 +11,7 @@ class RustDriver(LanguageDriver):
 
     language = 'rust'
     file_extension = 'rs'
+    is_compiled = True
 
     def make_scaffold(self, puzzle: Puzzle, input_data_path: Path, scaffold_dir: Path) -> None:
         super().make_scaffold(puzzle, input_data_path, scaffold_dir)
@@ -18,8 +19,8 @@ class RustDriver(LanguageDriver):
         manifest_path = scaffold_dir / 'Cargo.toml'
         src_path = self.get_src_path(puzzle, scaffold_dir)
         manifest = {
-            'package': {'name': f'aoc_{src_path.stem}', 'version': '0.1.0'},
-            'bin': [{'name': src_path.stem, 'path': str(src_path.relative_to(scaffold_dir))}],
+            'package': {'name': src_path.stem, 'version': '0.1.0'},
+            'bin': [{'name': src_path.stem, 'path': 'main.rs'}],
             'dependencies': {},
         }
         with open(manifest_path, 'w') as f:

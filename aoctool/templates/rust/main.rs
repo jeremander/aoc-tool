@@ -6,31 +6,9 @@ use std::env;
 use std::fs;
 use std::process;
 
+mod aoc{{puzzle.year}}{{'%02d' % puzzle.day}};
+use aoc{{puzzle.year}}{{'%02d' % puzzle.day}}::*;
 
-// define your own Value type for the problem
-type Value = ();
-
-
-//////////////////////////////////////////////////
-
-// fill these in
-
-/// Parse input into the Value type
-fn parse(input_data: &str) -> Option<Value> {
-    None
-}
-
-/// Solve part 1
-fn part1(value: Value) -> Option<i64> {
-    None
-}
-
-/// Solve part 2
-fn part2(value: Value) -> Option<i64> {
-    None
-}
-
-//////////////////////////////////////////////////
 
 const INPUT_DATA_PATH: &str = "{{input_data_path}}";
 
