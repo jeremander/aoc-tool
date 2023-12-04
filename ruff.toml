@@ -70,8 +70,7 @@ line-length = 320
 # src = ["src", "test"]
 
 [per-file-ignores]
-"setup.py" = ["ANN", "D"]
-"tests/*" = ["ANN", "D"]
+"aoctool/tests/*" = ["ANN", "D"]
 
 [flake8-pytest-style]
 parametrize-names-type = "list"
