@@ -17,6 +17,10 @@ subprocess-tee = "^0.4.1"
 [tool.poetry.scripts]
 aoctool = "aoctool.main:main"
 
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.mypy]
 exclude = [
     "aoctool/templates/.*.py",
@@ -28,7 +32,7 @@ exclude = [
 module = "aocd.*"
 ignore_missing_imports = true
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-v"
+testpaths = ["tests"]
