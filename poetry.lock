@@ -1068,6 +1068,20 @@ files = [
 ]
 
 [[package]]
+name = "subprocess-tee"
+version = "0.4.1"
+description = "subprocess-tee"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "subprocess-tee-0.4.1.tar.gz", hash = "sha256:b3c124993f8b88d1eb1c2fde0bc2069787eac720ba88771cba17e8c93324825d"},
+    {file = "subprocess_tee-0.4.1-py3-none-any.whl", hash = "sha256:eca56973a1c1237093c2055b2731bcaab784683b83f22c76f26e4c5763402e28"},
+]
+
+[package.extras]
+test = ["enrich (>=1.2.6)", "molecule (>=3.4.0)", "pytest (>=6.2.5)", "pytest-cov (>=2.12.1)", "pytest-plus (>=0.2)", "pytest-xdist (>=2.3.0)"]
+
+[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -1249,4 +1263,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "4e66e906124959b1ac43b171e654cadd466aaa899390aad2e6c6b1c3a017ff1b"
+content-hash = "3088a51dc012560df1299e56d90486a366a89deab78e741d00944dafccda00f2"

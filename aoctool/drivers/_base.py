@@ -9,6 +9,7 @@ from typing import Any, ClassVar, NamedTuple, Optional, TypeAlias
 
 import aocd
 from jinja2 import Template
+import subprocess_tee
 
 from aoctool.utils import Part, Puzzle, command2str, log, make_directory, write_file
 
@@ -46,6 +47,7 @@ class LanguageDriver(ABC):
 
     def get_src_path(self, puzzle: Puzzle, scaffold_dir: Path) -> Path:
         """Given a puzzle and scaffold directory, gets the source path."""
+        # return scaffold_dir / f'{puzzle.name}.{self.file_extension}'
         return scaffold_dir / f'{puzzle.name}.{self.file_extension}'
 
     def make_scaffold(self, puzzle: Puzzle, input_data_path: Path, scaffold_dir: Path) -> None:
@@ -146,7 +148,7 @@ class AoCBuilder:
         if (exec_path != self.src_path):
             log(f'Compiled to executable {exec_path}')
 
-    def _get_run_result(self, part: Optional[Part] = None) -> RunResult:
+    def _get_run_result(self, part: Optional[Part] = None, profile: bool = False) -> RunResult:
         part = part or self.puzzle.current_part
         log(f'Computing solution for part {part} of the puzzle')
         if (not self.exec_path.exists()):
@@ -154,27 +156,34 @@ class AoCBuilder:
         args = self.driver.get_run_args(self.exec_path) + [str(part)]
         cmd_str = command2str(args)
         log(f'Running executable {self.exec_path}\n\n{cmd_str}\n')
-        proc = subprocess.run(args, capture_output = True)
-        solution = int(proc.stdout.decode().strip()) if (proc.returncode == 0) else None
-        return RunResult(solution, proc.returncode, proc.stderr.decode())
-
-    def do_run(self, part: Optional[Part] = None) -> None:
-        """Runs the executable, printing out the solution to stdout.
-        Runtime diagnostics will be saved to a JSON file."""
-        result = self._get_run_result(part = part)
-        if (result.returncode == 0):
-            run_info = self.driver.parse_run_info(result.stderr)
-            log(f'Saving run info to {self.run_info_path}')
-            with open(self.run_info_path, 'w') as f:
-                json.dump(run_info, f, indent = 4)
-            print(result.solution)
+        run = subprocess.run if profile else subprocess_tee.run
+        proc = run(args, capture_output = True)  # type: ignore
+        if (proc.returncode == 0):  # assume last line of output is the integer solution
+            output_lines = proc.stdout.strip().splitlines()
+            solution = int(output_lines[-1])
         else:
-            print(result.stderr, file = sys.stderr)
+            solution = None
+        return RunResult(solution, proc.returncode, proc.stderr)
+
+    def do_run(self, part: Optional[Part] = None, profile: bool = False) -> None:
+        """Runs the executable, printing out the solution to stdout.
+        If profile = True, will compute runtime diagnostics and save them to a JSON file."""
+        result = self._get_run_result(part = part, profile = profile)
+        if (result.returncode == 0):
+            if profile:
+                run_info = self.driver.parse_run_info(result.stderr)
+                log(f'Saving run info to {self.run_info_path}')
+                with open(self.run_info_path, 'w') as f:
+                    json.dump(run_info, f, indent = 4)
+                print(result.solution)
+        else:
+            if profile:
+                print(result.stderr, file = sys.stderr)
             print('❌')
 
-    def do_submit(self) -> None:
+    def do_submit(self, profile: bool = False) -> None:
         """Runs the executable to obtain the solution, then submits it to the AoC server."""
-        result = self._get_run_result()
+        result = self._get_run_result(profile = profile)
         if (result.returncode == 0):
             log(f'Submitting solution {result.solution}')
             part = 'a' if (self.puzzle.current_part == 1) else 'b'

@@ -1,4 +1,6 @@
-- Upload to PyPI
+- Migrate to multi-file project structure
+    - split main from library
+    - 'scaffold' command should clearly indicate which file to edit
 - Unit test scaffolding
     - 'aoctool test' command
     - use puzzle.examples to fetch examples during scaffolding
@@ -21,3 +23,7 @@
         - Parsing
         - Solving
     - Be careful when timing Haskell due to lazy evaluation
+- Run multiple puzzles at once (give it root directory?)
+    - Gather all diagnostics into a JSON
+    - Statistics and plots
+- Upload to PyPI

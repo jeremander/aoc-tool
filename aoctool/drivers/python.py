@@ -15,7 +15,7 @@ class PythonDriver(LanguageDriver):
         manifest_path = scaffold_dir / 'pyproject.toml'
         src_path = self.get_src_path(puzzle, scaffold_dir)
         # use 'poetry init' to create a pyproject.toml file in the same directory as the source file
-        name = f'aoc_{src_path.stem}'
+        name = src_path.stem
         cmd = ['poetry', 'init', '--no-interaction', '--name', name, '--directory', str(scaffold_dir)]
         cmd_str = command2str(cmd)
         log(cmd_str)

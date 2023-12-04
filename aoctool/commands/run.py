@@ -12,6 +12,7 @@ def configure_parser(parser: ArgumentParser) -> None:
     parser_config['output_dir'](parser)
     parser.add_argument('--part', type = int, choices = (1, 2), help = 'which part of the puzzle to run')
     parser.add_argument('--submit', action = 'store_true', help = 'submit solution to AoC server')
+    parser.add_argument('--profile', action = 'store_true', help = 'run in profile mode')
 
 def run(args: Namespace) -> None:
     builder = aoc_builder_from_args(args)
@@ -20,4 +21,4 @@ def run(args: Namespace) -> None:
             raise ValueError('Cannot specify --part when submitting')
         builder.do_submit()
     else:
-        builder.do_run(part = args.part)
+        builder.do_run(part = args.part, profile = args.profile)

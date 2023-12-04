@@ -18,6 +18,7 @@ class DataDownloader:
         return self.output_dir / str(self.puzzle.year) / f'{self.puzzle.day:02d}'
 
     def download(self) -> None:
+        log(f'Downloading puzzle data and description for {self.puzzle.date_string}')
         if (not self.puzzle_dir.exists()):
             make_directory(self.puzzle_dir)
         _ = self.puzzle.input_data  # ensures input data is downloaded
